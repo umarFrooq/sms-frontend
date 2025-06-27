@@ -6,25 +6,27 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+// import VisibilityIcon from '@mui/icons-material/Visibility'; // If a view page is needed
 import { Link as RouterLink } from 'react-router-dom';
 
 // Mock Data - Replace with API call
 const createMockSubject = (id, title, code, creditHours, teacher) => {
-  return { id, title, code, creditHours, teacher };
+  return { id, title, code, creditHours, teacher }; // teacher is placeholder
 };
 
 const initialMockSubjects = [
-  createMockSubject(1, 'Introduction to Programming', 'CS101', 3, 'Dr. Smith'),
-  createMockSubject(2, 'Calculus I', 'MA101', 4, 'Prof. Jones'),
-  createMockSubject(3, 'English Composition', 'EN100', 3, 'Ms. Davis'),
-  createMockSubject(4, 'Physics for Engineers', 'PHY102', 4, 'Dr. Brown'),
-  createMockSubject(5, 'Data Structures', 'CS201', 3, 'Dr. Smith'),
+  createMockSubject(1, 'Introduction to Programming', 'CS101', 3, 'Dr. Ada Lovelace'),
+  createMockSubject(2, 'Calculus I', 'MA101', 4, 'Prof. Isaac Newton'),
+  createMockSubject(3, 'English Composition', 'EN100', 3, 'Ms. Jane Austen'),
+  createMockSubject(4, 'Physics for Engineers', 'PHY102', 4, 'Dr. Albert Einstein'),
+  createMockSubject(5, 'Data Structures & Algorithms', 'CS201', 3, 'Dr. Ada Lovelace'),
+  createMockSubject(6, 'Linear Algebra', 'MA202', 3, 'Prof. Isaac Newton'),
 ];
 
 const SubjectListPage = () => {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // eslint-disable-line no-unused-vars
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -33,7 +35,7 @@ const SubjectListPage = () => {
     setTimeout(() => {
       setSubjects(initialMockSubjects);
       setLoading(false);
-    }, 1000); // Simulate API call
+    }, 500); // Simulate API call
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -46,16 +48,16 @@ const SubjectListPage = () => {
   };
 
   const handleDeleteSubject = (subjectId) => {
-    // TODO: Implement delete functionality (API call, update state)
-    console.log('Delete subject:', subjectId);
-    setSubjects(subjects.filter(subject => subject.id !== subjectId)); // Optimistic update
-    alert(`Subject with ID ${subjectId} would be deleted. (Placeholder)`);
+    // TODO: Implement delete functionality (API call, update state, confirmation dialog)
+    console.log('Attempting to delete subject:', subjectId);
+    setSubjects(prevSubjects => prevSubjects.filter(subject => subject.id !== subjectId)); // Optimistic update
+    alert(`Subject with ID ${subjectId} would be deleted. (Placeholder - API call needed)`);
   };
 
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-        <CircularProgress />
+        <CircularProgress /> <Typography sx={{ml:1}}>Loading subjects...</Typography>
       </Box>
     );
   }
@@ -67,11 +69,12 @@ const SubjectListPage = () => {
   const paginatedSubjects = subjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Paper sx={{ p: 3, margin: 'auto', overflowX: 'auto' }}>
+    <Paper sx={{ p: {xs: 2, sm: 3}, margin: 'auto', overflowX: 'auto' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" component="div" gutterBottom>
           Subjects Management
         </Typography>
+        {/* TODO: Role-based rendering for this button (e.g., admin/registrar only) */}
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -82,15 +85,17 @@ const SubjectListPage = () => {
         </Button>
       </Box>
 
+      {/* TODO: Add filtering/search inputs here */}
+
       <TableContainer>
         <Table stickyHeader aria-label="subjects table">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>ID</TableCell> {/* Hide ID on extra small screens */}
               <TableCell>Title</TableCell>
               <TableCell>Code</TableCell>
               <TableCell>Credit Hours</TableCell>
-              <TableCell>Teacher (Placeholder)</TableCell>
+              <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}>Teacher (Placeholder)</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -104,23 +109,32 @@ const SubjectListPage = () => {
             ) : (
               paginatedSubjects.map((subject) => (
                 <TableRow hover key={subject.id}>
-                  <TableCell>{subject.id}</TableCell>
+                  <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>{subject.id}</TableCell>
                   <TableCell>{subject.title}</TableCell>
                   <TableCell>{subject.code}</TableCell>
-                  <TableCell>{subject.creditHours}</TableCell>
-                  <TableCell>{subject.teacher}</TableCell>
+                  <TableCell align="center">{subject.creditHours}</TableCell>
+                  <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}>{subject.teacher}</TableCell>
                   <TableCell align="center">
+                    {/* <IconButton
+                      aria-label="view subject"
+                      size="small"
+                      component={RouterLink}
+                      to={`/subjects/view/${subject.id}`} // If a view page is needed
+                      sx={{ color: 'info.main', mr: {xs:0, sm:0.5}}} >
+                      <VisibilityIcon />
+                    </IconButton> */}
+                    {/* TODO: Role-based rendering for these buttons */}
                     <IconButton
-                      aria-label="edit"
+                      aria-label="edit subject"
                       size="small"
                       component={RouterLink}
                       to={`/subjects/edit/${subject.id}`}
-                      sx={{ color: 'secondary.main' }}
+                      sx={{ color: 'secondary.main', mr: {xs:0, sm:0.5} }}
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                      aria-label="delete"
+                      aria-label="delete subject"
                       size="small"
                       onClick={() => handleDeleteSubject(subject.id)}
                       sx={{ color: 'error.main' }}

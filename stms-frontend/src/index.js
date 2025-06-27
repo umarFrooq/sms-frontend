@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './index.css'; // Keep for global baseline styles if any, or remove if CssBaseline is enough
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider, CssBaseline } from '@mui/material';

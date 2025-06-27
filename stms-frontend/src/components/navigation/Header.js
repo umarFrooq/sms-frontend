@@ -1,11 +1,12 @@
 import React from 'react';
 import { AppBar, Toolbar, IconButton, Typography, Box, Avatar, Menu, MenuItem, Tooltip } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle'; // Default user icon
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Corrected import name
+// import { Link as RouterLink } from 'react-router-dom'; // For menu item navigation if needed
 
 const userNavigations = [
-  { name: 'Profile', href: '/profile' }, // TODO: Update href later
-  { name: 'Settings', href: '/settings' }, // TODO: Update href later
+  { name: 'Profile', href: '/profile', action: null }, // Placeholder, action: navigate
+  { name: 'Settings', href: '/settings', action: null }, // Placeholder, action: navigate
   { name: 'Logout', action: 'logout' }, // Special action for logout
 ];
 
@@ -20,16 +21,19 @@ const Header = ({ drawerWidth, handleDrawerToggle }) => {
     setAnchorElUser(null);
   };
 
-  const handleUserMenuAction = (action) => {
+  const handleUserMenuAction = (setting) => {
     handleCloseUserMenu();
-    if (action === 'logout') {
-      // TODO: Implement actual logout logic
-      alert('Logout action triggered!');
-      // For now, redirect to login, assuming AppRoutes handles this based on auth state
-      // This might require context/state management to properly clear auth state
-      window.location.href = '/login';
+    if (setting.action === 'logout') {
+      // TODO: Implement actual logout logic (clear auth state, redirect)
+      console.log('Logout action triggered!');
+      alert('Logout functionality placeholder.');
+      // For now, simple redirect. Proper logout needs auth context update.
+      // window.location.href = '/login'; // This might be too abrupt, use navigate from react-router-dom via context
+    } else if (setting.href) {
+      // TODO: Navigate using react-router-dom, likely via context or passed navigate function
+      console.log(`Navigate to ${setting.href}`);
+      // navigate(setting.href); // Example if navigate function is available
     }
-    // Handle other actions like navigation if needed
   };
 
   return (
@@ -38,7 +42,7 @@ const Header = ({ drawerWidth, handleDrawerToggle }) => {
       sx={{
         width: { sm: `calc(100% - ${drawerWidth}px)` },
         ml: { sm: `${drawerWidth}px` },
-        boxShadow: (theme) => theme.shadows[1], // Softer shadow from theme
+        boxShadow: (theme) => theme.shadows[1],
       }}
     >
       <Toolbar>
@@ -47,21 +51,19 @@ const Header = ({ drawerWidth, handleDrawerToggle }) => {
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2, display: { sm: 'none' } }} // Only show on small screens
+          sx={{ mr: 2, display: { sm: 'none' } }}
         >
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          Student Management System {/* Or your App Name */}
+          Student Management System
         </Typography>
 
         <Box sx={{ flexGrow: 0 }}>
-          <Tooltip title="Open user menu">
+          <Tooltip title="Open user settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              {/* Placeholder for user avatar - replace with actual user data */}
-              <Avatar alt="User Name" src="/static/images/avatar/2.jpg">
-                 {/* Fallback if src is invalid or user has no image */}
-                <AccountCircle />
+              <Avatar alt="User Name">
+                <AccountCircleIcon /> {/* Default icon if no src */}
               </Avatar>
             </IconButton>
           </Tooltip>
@@ -84,9 +86,7 @@ const Header = ({ drawerWidth, handleDrawerToggle }) => {
             {userNavigations.map((setting) => (
               <MenuItem
                 key={setting.name}
-                onClick={() => setting.action ? handleUserMenuAction(setting.action) : handleCloseUserMenu()}
-                // component={setting.href ? RouterLink : 'div'} // If using react-router-dom for navigation
-                // to={setting.href}
+                onClick={() => handleUserMenuAction(setting)}
               >
                 <Typography textAlign="center">{setting.name}</Typography>
               </MenuItem>

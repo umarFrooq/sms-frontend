@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import '@fontsource/inter';
+import '@fontsource/inter'; // Ensure the font is imported
 
 // Define the custom theme
 const theme = createTheme({
@@ -60,7 +60,7 @@ const theme = createTheme({
       fontWeight: 400,
     },
     button: {
-      textTransform: 'none', // Keep button text case as is, or 'capitalize'/'uppercase'
+      textTransform: 'none',
       fontWeight: 600,
     },
   },
@@ -68,27 +68,27 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8, // Slightly more rounded buttons
+          borderRadius: 8,
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12, // More rounded cards
-          boxShadow: '0px 4px 12px rgba(0,0,0,0.08)', // Softer shadow
+          borderRadius: 12,
+          boxShadow: '0px 4px 12px rgba(0,0,0,0.08)',
         },
       },
     },
     MuiTextField: {
       defaultProps: {
-        variant: 'outlined', // Default to outlined text fields
+        variant: 'outlined',
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: '0px 2px 8px rgba(0,0,0,0.05)', // Subtle shadow for app bar
+          boxShadow: '0px 2px 8px rgba(0,0,0,0.05)',
         }
       }
     }

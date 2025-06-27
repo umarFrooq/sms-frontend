@@ -8,16 +8,16 @@ const AddUserPage = () => {
 
   const handleAddUser = (formData) => {
     // TODO: Implement API call to add user
-    console.log('New User Data:', formData);
+    console.log('New User Data to submit:', formData);
     // Simulate successful API call
-    alert('User added successfully! (Placeholder)');
+    alert('User created successfully! (Placeholder - API call needed)');
     navigate('/users'); // Redirect to user list page after successful submission
   };
 
   return (
     <Box>
-      {/* Optionally, add a page title or breadcrumbs if MainLayout doesn't handle it */}
-      {/* <Typography variant="h4" gutterBottom sx={{mb: 3}}>Add New User</Typography> */}
+      {/* Optional: Page Title if not handled by MainLayout or a higher component */}
+      {/* <Typography variant="h4" gutterBottom sx={{mb: 2}}>Create New User</Typography> */}
       <UserForm onSubmit={handleAddUser} isEditMode={false} />
     </Box>
   );

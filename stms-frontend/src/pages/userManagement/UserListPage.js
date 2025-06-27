@@ -7,9 +7,9 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Link as RouterLink } from 'react-router-dom'; // For navigation
+import { Link as RouterLink } from 'react-router-dom';
 
-// Mock Data - Replace with API call
+// Mock Data
 const createMockUser = (id, userName, email, role, branch, cnic, mobile, status) => {
   return { id, userName, email, role, branch, cnic, mobile, status };
 };
@@ -19,25 +19,21 @@ const initialMockUsers = [
   createMockUser(2, 'janeschmoe', 'jane.schmoe@example.com', 'Teacher', 'City Campus', '54321-7654321-2', '0333-7654321', 'Active'),
   createMockUser(3, 'peterjones', 'peter.jones@example.com', 'Student', 'Main Campus', '11223-3445566-7', '0312-3456789', 'Inactive'),
   createMockUser(4, 'alicebrown', 'alice.brown@example.com', 'Parent', 'Online', '98765-4321098-7', '0345-9876543', 'Active'),
-  createMockUser(5, 'bobgreen', 'bob.green@example.com', 'Student', 'City Campus', '55555-5555555-5', '0321-5554321', 'Active'),
 ];
 
 const UserListPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // eslint-disable-line no-unused-vars
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    // Simulate API call
     setLoading(true);
     setTimeout(() => {
       setUsers(initialMockUsers);
       setLoading(false);
-    }, 1000);
-    // In a real app:
-    // fetchUsers().then(data => setUsers(data)).catch(err => setError(err.message)).finally(() => setLoading(false));
+    }, 500); // Simulate API call
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -50,37 +46,39 @@ const UserListPage = () => {
   };
 
   const handleDeleteUser = (userId) => {
-    // TODO: Implement delete functionality (API call, update state)
-    console.log('Delete user:', userId);
-    setUsers(users.filter(user => user.id !== userId)); // Optimistic update for now
-    alert(`User with ID ${userId} would be deleted. (Placeholder)`);
+    // TODO: Implement delete functionality (API call, update state, confirmation dialog)
+    console.log('Attempting to delete user:', userId);
+    // Optimistic update for UI demo
+    setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+    alert(`User with ID ${userId} would be deleted. (Placeholder - API call needed)`);
   };
 
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-        <CircularProgress />
+        <CircularProgress /> <Typography sx={{ml:1}}>Loading users...</Typography>
       </Box>
     );
   }
 
-  if (error) {
+  if (error) { // Although setError is not used to set an error in this mock, this structure is good for real API calls
     return <Alert severity="error">Error fetching users: {error}</Alert>;
   }
 
   const paginatedUsers = users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Paper sx={{ p: 3, margin: 'auto', overflowX: 'auto' }}>
+    <Paper sx={{ p: { xs: 2, sm: 3 }, margin: 'auto', overflowX: 'auto' }}> {/* Responsive padding */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom component="div"> {/* Added component="div" for semantic correctness */}
           User Management
         </Typography>
+        {/* TODO: Role-based rendering for this button (e.g., admin only) */}
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           component={RouterLink}
-          to="/users/add" //  Will define this route later
+          to="/users/add"
         >
           Add User
         </Button>
@@ -95,9 +93,9 @@ const UserListPage = () => {
               <TableCell>Username</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>Branch</TableCell>
-              <TableCell>CNIC</TableCell>
-              <TableCell>Mobile</TableCell>
+              <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}>Branch</TableCell> {/* Hide on small screens */}
+              <TableCell sx={{display: {xs: 'none', lg: 'table-cell'}}}>CNIC</TableCell> {/* Hide on small/medium screens */}
+              <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}>Mobile</TableCell> {/* Hide on small screens */}
               <TableCell>Status</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -105,7 +103,7 @@ const UserListPage = () => {
           <TableBody>
             {paginatedUsers.length === 0 && !loading ? (
                 <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={8} align="center"> {/* Adjusted colSpan */}
                         No users found.
                     </TableCell>
                 </TableRow>
@@ -115,15 +113,15 @@ const UserListPage = () => {
                 <TableCell>{user.userName}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
-                <TableCell>{user.branch}</TableCell>
-                <TableCell>{user.cnic}</TableCell>
-                <TableCell>{user.mobile}</TableCell>
+                <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}>{user.branch}</TableCell>
+                <TableCell sx={{display: {xs: 'none', lg: 'table-cell'}}}>{user.cnic}</TableCell>
+                <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}>{user.mobile}</TableCell>
                 <TableCell>
                    <Typography
                         variant="body2"
                         sx={{
                             color: user.status === 'Active' ? 'success.main' : 'error.main',
-                            fontWeight: 'bold'
+                            fontWeight: 'medium' // slightly bolder
                         }}
                     >
                         {user.status}
@@ -131,25 +129,26 @@ const UserListPage = () => {
                 </TableCell>
                 <TableCell align="center">
                   <IconButton
-                    aria-label="view"
+                    aria-label="view user"
                     size="small"
                     component={RouterLink}
-                    to={`/users/view/${user.id}`} // Will define this route later
-                    sx={{ color: 'primary.main' }}
+                    to={`/users/view/${user.id}`}
+                    sx={{ color: 'primary.main', mr: {xs: 0, sm: 0.5} }} // Responsive margin
                   >
                     <VisibilityIcon />
                   </IconButton>
+                  {/* TODO: Role-based rendering for these buttons */}
                   <IconButton
-                    aria-label="edit"
+                    aria-label="edit user"
                     size="small"
                     component={RouterLink}
-                    to={`/users/edit/${user.id}`} // Will define this route later
-                    sx={{ color: 'secondary.main' }}
+                    to={`/users/edit/${user.id}`}
+                    sx={{ color: 'secondary.main', mr: {xs: 0, sm: 0.5} }}
                   >
                     <EditIcon />
                   </IconButton>
                   <IconButton
-                    aria-label="delete"
+                    aria-label="delete user"
                     size="small"
                     onClick={() => handleDeleteUser(user.id)}
                     sx={{ color: 'error.main' }}

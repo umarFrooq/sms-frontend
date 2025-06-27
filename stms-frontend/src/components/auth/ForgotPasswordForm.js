@@ -9,15 +9,16 @@ const ForgotPasswordForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // TODO: Handle forgot password logic (e.g., API call)
-    console.log('Forgot password for email:', email);
+    console.log('Forgot password request for email:', email);
     setSubmitted(true);
+    // alert('Password reset link functionality placeholder.'); // Or use the submitted message
   };
 
   if (submitted) {
     return (
       <Box sx={{ mt: 1, textAlign: 'center' }}>
         <Typography variant="body1" gutterBottom>
-          If an account exists for {email}, you will receive an email with instructions to reset your password.
+          If an account exists for <strong>{email}</strong>, you will receive an email with instructions to reset your password shortly.
         </Typography>
         <MuiLink component={RouterLink} to="/login" variant="body2" sx={{ mt: 2, display: 'block' }}>
           Return to Sign In
@@ -27,8 +28,8 @@ const ForgotPasswordForm = () => {
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-      <Typography variant="body2" sx={{ mb: 2 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} noValidate>
+      <Typography variant="body2" sx={{ mb: 2, textAlign: 'center' }}>
         Enter your email address and we'll send you a link to reset your password.
       </Typography>
       <TextField

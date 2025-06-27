@@ -2,20 +2,22 @@ import React from 'react';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Box, Typography, Collapse } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
-import SchoolIcon from '@mui/icons-material/School'; // For Students
-import BookIcon from '@mui/icons-material/Book'; // For Subjects
-import GradeIcon from '@mui/icons-material/Grade'; // For Grades
-import EventNoteIcon from '@mui/icons-material/EventNote'; // For Timetable
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'; // For Fees
+import SchoolIcon from '@mui/icons-material/School';
+import BookIcon from '@mui/icons-material/Book';
+import GradeIcon from '@mui/icons-material/Grade';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'; // For Grade Entry
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 import { NavLink as RouterNavLink } from 'react-router-dom';
 
-// TODO: Replace with actual role from auth context
-const userRole = 'admin'; // Example roles: 'admin', 'teacher', 'student', 'parent'
+// TODO: Replace with actual role from auth context.
+// This is a placeholder and will determine which links are shown.
+// Possible roles: 'admin', 'super_admin', 'teacher', 'student', 'parent'
+const userRole = 'admin';
 
 
 const NavLinkBehavior = React.forwardRef((props, ref) => (
@@ -25,16 +27,14 @@ const NavLinkBehavior = React.forwardRef((props, ref) => (
     style={({ isActive }) => ({
       textDecoration: 'none',
       color: 'inherit',
-      ...(isActive && !props.isparent ? { // Do not apply active style to parent if it's just a collapse trigger
+      ...(isActive && !props.isparent ? {
         backgroundColor: 'rgba(0, 0, 0, 0.08)',
-        // borderRight: '3px solid ' + (props.theme?.palette?.primary?.main || '#1976d2'), // Example active indicator
       } : {}),
       ...props.style,
     })}
-    // Close drawer on item click for mobile
     onClick={(e) => {
       if (props.onClick) props.onClick(e);
-      if (props.handleDrawerToggle) {
+      if (props.handleDrawerToggle) { // For mobile: close drawer on item click
         const drawer = document.querySelector('.MuiDrawer-paper');
         if (drawer && window.getComputedStyle(drawer).getPropertyValue('position') === 'fixed') {
           props.handleDrawerToggle();
@@ -47,8 +47,9 @@ const NavLinkBehavior = React.forwardRef((props, ref) => (
 const SidebarNavItem = ({ item, handleDrawerToggle }) => {
   const [open, setOpen] = React.useState(false);
 
+  // Role check: if item has roles defined and user's role is not among them, don't render
   if (item.roles && !item.roles.includes(userRole)) {
-    return null; // Don't render if user role doesn't match
+    return null;
   }
 
   const handleClick = () => {
@@ -57,7 +58,7 @@ const SidebarNavItem = ({ item, handleDrawerToggle }) => {
     }
   };
 
-  if (item.children) {
+  if (item.children) { // This item has children, render as a collapsible section
     return (
       <>
         <ListItemButton onClick={handleClick} sx={{ py: 1.5 }}>
@@ -68,7 +69,8 @@ const SidebarNavItem = ({ item, handleDrawerToggle }) => {
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {item.children.map((child) => (
-              <SidebarNavItem key={child.text} item={child} handleDrawerToggle={handleDrawerToggle} />
+              // Recursively render child items, passing necessary props
+              <SidebarNavItem key={child.text} item={{...child, isChild: true}} handleDrawerToggle={handleDrawerToggle} />
             ))}
           </List>
         </Collapse>
@@ -76,13 +78,14 @@ const SidebarNavItem = ({ item, handleDrawerToggle }) => {
     );
   }
 
+  // This item is a direct link
   return (
     <ListItem
         disablePadding
         component={NavLinkBehavior}
-        to={item.path}
+        to={item.path || '#'} // Fallback path if none provided
         handleDrawerToggle={handleDrawerToggle}
-        isparent={!!item.children} // Pass this to NavLinkBehavior
+        isparent={!!item.children} // For NavLinkBehavior styling
     >
       <ListItemButton sx={{ py: 1.5, pl: item.isChild ? 4 : 2  }}> {/* Indent child items */}
         <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
@@ -92,7 +95,7 @@ const SidebarNavItem = ({ item, handleDrawerToggle }) => {
   );
 };
 
-
+// Define navigation structure with roles
 const navConfig = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', roles: ['admin', 'teacher', 'student', 'parent', 'super_admin'] },
   {
@@ -104,23 +107,23 @@ const navConfig = [
   {
     text: 'Academic Management',
     icon: <SchoolIcon />,
-    roles: ['admin', 'teacher', 'student', 'parent', 'super_admin'],
+    roles: ['admin', 'teacher', 'student', 'parent', 'super_admin'], // Parent role can see some children like "My Grades"
     children: [
-      { text: 'Subjects', icon: <BookIcon />, path: '/subjects', isChild: true, roles: ['admin', 'teacher', 'super_admin'] },
-      { text: 'Grade Entry', icon: <AssignmentTurnedInIcon />, path: '/grades/entry', isChild: true, roles: ['admin', 'teacher', 'super_admin'] },
-      { text: 'My Grades', icon: <GradeIcon />, path: '/my-grades', isChild: true, roles: ['student', 'parent'] },
-      // Add other academic links here with roles
+      { text: 'Subjects', icon: <BookIcon />, path: '/subjects', roles: ['admin', 'teacher', 'super_admin'] },
+      { text: 'Grade Entry', icon: <AssignmentTurnedInIcon />, path: '/grades/entry', roles: ['admin', 'teacher', 'super_admin'] },
+      { text: 'My Grades', icon: <GradeIcon />, path: '/my-grades', roles: ['student', 'parent'] },
+      // TODO: Add other academic links here with appropriate roles
+      // { text: 'Attendance', icon: <SomeIcon />, path: '/attendance', roles: ['admin', 'teacher'] },
     ]
   },
-  { text: 'Students Records', icon: <SchoolIcon />, path: '/students', roles: ['admin', 'teacher', 'super_admin'] }, // Example path
-  { text: 'Timetable', icon: <EventNoteIcon />, path: '/timetable', roles: ['admin', 'teacher', 'student', 'super_admin'] }, // Example path
-  { text: 'Fees Management', icon: <AccountBalanceWalletIcon />, path: '/fees', roles: ['admin', 'super_admin'] }, // Example path
+  { text: 'Student Records', icon: <SchoolIcon />, path: '/students', roles: ['admin', 'teacher', 'super_admin'] },
+  { text: 'Timetable', icon: <EventNoteIcon />, path: '/timetable', roles: ['admin', 'teacher', 'student', 'super_admin'] },
+  { text: 'Fees Management', icon: <AccountBalanceWalletIcon />, path: '/fees', roles: ['admin', 'super_admin'] },
 ];
 
 const settingsNavItems = [
-  { text: 'System Settings', icon: <SettingsIcon />, path: '/system-settings', roles: ['admin', 'super_admin'] }, // Example
+  { text: 'System Settings', icon: <SettingsIcon />, path: '/system-settings', roles: ['admin', 'super_admin'] },
 ];
-
 
 const SidebarNav = ({ handleDrawerToggle }) => {
   return (

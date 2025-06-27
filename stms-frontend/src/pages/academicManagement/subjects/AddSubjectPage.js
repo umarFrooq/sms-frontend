@@ -8,14 +8,16 @@ const AddSubjectPage = () => {
 
   const handleAddSubject = (formData) => {
     // TODO: Implement API call to add subject
-    console.log('New Subject Data:', formData);
+    console.log('New Subject Data to submit:', formData);
     // Simulate successful API call
-    alert('Subject added successfully! (Placeholder)');
+    alert('Subject created successfully! (Placeholder - API call needed)');
     navigate('/subjects'); // Redirect to subject list page
   };
 
   return (
     <Box>
+      {/* Optional: Page Title if not handled by MainLayout or a higher component */}
+      {/* <Typography variant="h4" gutterBottom sx={{mb: 2}}>Create New Subject</Typography> */}
       <SubjectForm onSubmit={handleAddSubject} isEditMode={false} />
     </Box>
   );

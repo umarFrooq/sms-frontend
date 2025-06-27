@@ -11,8 +11,8 @@ const AuthLayout = ({ children, title }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          padding: 4,
-          borderRadius: 2, // Consistent with theme.js MuiCard
+          padding: (theme) => theme.spacing(3, 4), // Consistent padding
+          borderRadius: 2,
         }}
       >
         <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
